@@ -9,6 +9,7 @@ const conn = require('./db/conn')
 
 // Imports variados
 const thoughtRoutes = require('./routes/thoughtRoutes')
+const authRoutes = require('./routes/authRoutes')
 const ThoughtController = require('./controllers/ThoughtController')
 
 //Models
@@ -65,6 +66,7 @@ app.use((req, res, next) => {
 
 //Routes
 app.use('/thoughts', thoughtRoutes)
+app.use('/', authRoutes)
 
 app.get('/', ThoughtController.index)
 

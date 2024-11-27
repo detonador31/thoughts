@@ -13,9 +13,9 @@ module.exports = class ThoughtController {
     }
 
     static async index(req, res) {
-        const thoughts = await Thought.findAll({ raw: true })
+        //const thoughts = await Thought.findAll({ raw: true })
 
-        res.render('thoughts/index', { thoughts })
+        res.render('thoughts/index')
     }
 
     static async delete(req, res) {
