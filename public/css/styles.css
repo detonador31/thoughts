@@ -107,6 +107,40 @@ form input[type='submit']:hover,
     color: #fff;
 }
 
+/* Dashboard Create / edit form */
+.thought-form-container a {
+    color: #f6982d;
+}
+
+.thought-form-container a:hover {
+    color: #fff;
+}
+
+.thought-form-container h1 {
+    margin: 1em 0;
+    color: #FFF;
+    border-left: 4px solid #f6982d;
+    padding: .3em;
+}
+
+.thought-form-container form {
+    max-width: 30%;
+    margin-top: 1.5em;
+}
+
+
+
+.message {
+    padding: 1em;
+    color: #004085;
+    background-color: #cce5ff;
+    border: 1px solid #b8daff;
+    border-radius: 5px;
+    text-align: center;
+    margin: 0 auto 2em;
+    max-width: 60%;
+}
+
 /* Footer */
 footer {
     height: 150px;
@@ -121,13 +155,3 @@ footer span {
     color: #f6982d;
 }
 
-.message {
-    padding: 1em;
-    color: #004085;
-    background-color: #cce5ff;
-    border: 1px solid #b8daff;
-    border-radius: 5px;
-    text-align: center;
-    margin: 0 auto 2em;
-    max-width: 60%;
-}

@@ -1,6 +1,6 @@
 const Thought = require('../models/Thought')
 
-module.exports = class ThoughtController {
+module.exports = class ThoughtsController {
     static async new(req, res) {
         res.render('thoughts/new')
     }
@@ -18,6 +18,12 @@ module.exports = class ThoughtController {
         res.render('thoughts/index')
     }
 
+    static async dashboard(req, res) {
+        //const thoughts = await Thought.findAll({ raw: true })
+
+        res.render('thoughts/dashboard')
+    }
+
     static async delete(req, res) {
         const id = req.params.id
         await Thought.destroy({ where: { id: id } })
@@ -29,16 +35,25 @@ module.exports = class ThoughtController {
         const id = req.body.id
 
         const thoughtData = {
-
-
+            UserId: req.session.userid,
+            title: req.body.title
         }
-        if (id) {
-            await Thought.update(thoughtData, { where: { id: id } });
-        } else {
-            await Thought.create(thoughtData);
+        try {
+            if (id) {
+                await Thought.update(thoughtData, { where: { id: id } })
+                req.flash('info', 'Pensamento atualizado com sucesso!')
+            } else {
+                await Thought.create(thoughtData);
+                req.flash('info', 'Pensamento criado com sucesso!')
+            }
+            req.session.save(() => {
+                res.redirect('/thoughts/dashboard')
+            })
+        } catch (err) {
+            req.flash('info', `Erro ao tentar criar ou atualizar pensamento! ${err}`)
+            res.redirect('/thoughts/dashboard')
         }
 
-        res.redirect('/thoughts')
     }
 
     static async changeStatus(req, res) {
