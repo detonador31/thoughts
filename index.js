@@ -72,7 +72,7 @@ app.get('/', ThoughtController.index)
 
 conn
     //.sync({ force: true })
-    .sync({ force: true })
+    .sync()
     .then(() => {
         app.listen(5000)
     })

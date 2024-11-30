@@ -12,6 +12,7 @@
     "express-flash": "^0.0.2",
     "express-handlebars": "^8.0.1",
     "express-session": "^1.18.1",
+    "jsdoc": "^4.0.4",
     "mysql2": "^3.11.4",
     "nodemon": "^3.1.7",
     "sequelize": "^6.37.5",
@@ -20,7 +21,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js 192.168.15.61 5000"
+    "start": "nodemon index.js 192.168.15.157 5000"
   },
   "repository": {
     "type": "git",

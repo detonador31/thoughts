@@ -1,24 +1,54 @@
 const User = require('../models/User')
 
+const bcrypt = require('bcryptjs')
+
 module.exports = class AuthController {
     static login(req, res) {
         res.render('auth/login')
+    }
+
+    static logout(req, res) {
+        req.session.destroy(() => {
+            res.redirect('/')
+        })
     }
 
     static register(req, res) {
         res.render('auth/register')
     }
 
-    static save(req, res) {
-        const { name, email, password, confirmpassword } = req.body;
-        const data = { name, email, password, confirmpassword };
-        let msg = 'Cadastrado com sucesso!'
+    static async save(req, res) {
+        const { name, email, senha, confirmpassword } = req.body;
         // Caso a senha não seja a mesma da confirmação, redireciona o usuário para o form
-        if (password !== confirmpassword) {
-            msg = 'A senha não confere com a conformação de senha!'
-            res.redirect('/')
+        if (senha !== confirmpassword) {
+            req.flash('info', 'A senha não confere com a confirmação de senha!')
+            res.render('auth/register')
+            return
         }
-        User.create(data)
-        res.redirect('/dashboard')
+        // Checa se o usuário existes
+        if (await User.findOne({ where: { email: email } })) {
+            req.flash('info', 'Este Usuário já existe! Tente outro usuário!')
+            res.render('auth/register')
+            return
+        }
+
+        const salt = bcrypt.genSaltSync(10)
+        const hashedPassword = bcrypt.hashSync(senha, salt)
+
+        const data = { name, email, senha: hashedPassword };
+        try {
+            const createdUser = await User.create(data)
+            //initialize session
+            req.session.userid = createdUser.id
+            req.flash('info', 'Cadastrado com sucesso!')
+            req.session.save(() => {
+                res.redirect('/')
+            })
+
+        } catch (err) {
+            req.flash('info', 'erro ao tentar salvar o usuario' + err)
+            res.render('auth/register')
+        }
     }
+
 }
