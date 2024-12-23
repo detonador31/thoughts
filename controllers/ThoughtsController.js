@@ -1,4 +1,7 @@
 const Thought = require('../models/Thought')
+const User = require('../models/User')
+
+const { Op } = require('sequelize')
 
 module.exports = class ThoughtsController {
     static async new(req, res) {
@@ -13,22 +16,69 @@ module.exports = class ThoughtsController {
     }
 
     static async index(req, res) {
-        //const thoughts = await Thought.findAll({ raw: true })
+        let search = '';
 
-        res.render('thoughts/index')
+        if (req.query.search) {
+            search = req.query.search
+        }
+
+        let order = 'DESC'
+
+        if (req.query.order === 'old') {
+            order = 'ASC'
+        } else {
+            order = 'DESC'
+        }
+
+        //const thoughts = await Thought.findAll({ raw: true })
+        const thoughtsData = await Thought.findAll({
+            include: User,
+            where: {
+                title: { [Op.like]: `%${search}%` }
+            },
+            order: [['createdAt', order]],
+        });
+        const thoughts = thoughtsData.map((result) => result.get({ plain: true }))
+
+        let thoughtsQtd = thoughts.length
+
+        if (thoughtsQtd === 0) {
+            thoughtsQtd = false;
+        }
+
+        res.render('thoughts/home', { thoughts, search, thoughtsQtd })
     }
 
     static async dashboard(req, res) {
-        //const thoughts = await Thought.findAll({ raw: true })
+        const userId = req.session.userid
+        const user = await User.findOne({ include: Thought, where: { id: userId } })
 
-        res.render('thoughts/dashboard')
+        if (!user) {
+            res.redirect('/login')
+        }
+
+        // const thoughts = user.Thoughts.map((result) => result.dataValues)
+        let emptyThoughts = false;
+        if (user.Thoughts.length === 0) {
+            emptyThoughts = true
+        }
+
+        res.render('thoughts/dashboard', { user: user.get({ plain: true }), emptyThoughts })
     }
 
     static async delete(req, res) {
         const id = req.params.id
-        await Thought.destroy({ where: { id: id } })
+        try {
+            await Thought.destroy({ where: { id: id } })
+            req.flash('info', 'Removido com sucesso!')
+        } catch (e) {
+            req.flash(`Erro ao excluir: ${e}`)
+        }
+        const userId = req.session.userid
+        const user = await User.findOne({ include: Thought, where: { id: userId } })
 
-        res.redirect('/thoughts')
+
+        res.render('thoughts/dashboard', { user: user.get({ plain: true }), })
     }
 
     static async save(req, res) {
@@ -65,5 +115,9 @@ module.exports = class ThoughtsController {
         }
 
         res.redirect('/thoughts')
+    }
+
+    static async getUserThoughts(userId) {
+
     }
 }

@@ -3,5 +3,20 @@
         <h2>Dashboard</h2>
         <a href="/thoughts/new" class="btn">Criar Pensamentos</a>
     </div>
+
     <h3>Seus Pensamentos</h3>
+    <ul>
+        {{#each user.Thoughts}}
+        <li>
+            <span class="label">{{ title }}</span>
+            <span class="actions">
+                <a href="/thoughts/edit/{{ id }}" class="btn edit">Editar</a>
+                <a href="/thoughts/delete/{{ id }}" class="btn delete">Excluir</a>
+            </span>
+        </li>
+        {{/each}}
+    </ul>
+    {{#if emptyThoughts }}
+    <p>Ainda não há pensamentos seus, comece a criar novos pensamentos agora mesmo <a href="/thoughts/new"></a> </p>
+    {{/if }}
 </div>
